@@ -10,25 +10,95 @@ import {
   Tooltip,
 } from "recharts";
 import { data } from "./technology-areas";
+import { Box, Icon, Text } from "@chakra-ui/react";
 
 const IMPACT_SCALE = 10;
+
+const CustomTooltip = ({ active, payload, label, ...rest }) => {
+  if (active && payload && payload.length) {
+    const {
+      stats_facts,
+      technology_adoption_arguments,
+      market_potential_arguments,
+      impact_to_GEA_arguments,
+      technology_adoption,
+      market_potential,
+      impact_to_GEA,
+    } = payload[0].payload;
+    return (
+      <Box
+        background={"white"}
+        className="custom-tooltip"
+        p={4}
+        borderRadius={"8px"}
+        maxW={"sm"}
+      >
+        <Text
+          align={"left"}
+          fontSize={"lg"}
+          color={"gray.900"}
+        >{`${label}`}</Text>
+        <Box my={2}>
+          <hr />
+        </Box>
+        <Text
+          align={"left"}
+          color={"gray.700"}
+          fontSize={"sm"}
+          className="intro"
+        >
+          Calculated Impact:{" "}
+          <Text color={"gray.900"} fontWeight={"bold"}>
+            {payload[0].value}
+          </Text>
+        </Text>
+        <Text align={"left"} mt={2} color="gray.700" fontSize={"sm"}>
+          <Box as="span" boxSize={6}>
+            ℹ️
+          </Box>
+          {stats_facts}
+        </Text>
+        <Text align={"left"} mt={2} color="gray.700" fontSize={"sm"}>
+          <Box as="span" boxSize={6}>
+            <b>Tech Adoption</b>:
+          </Box>
+          &nbsp;{technology_adoption}
+        </Text>
+        <Text align={"left"} mt={2} color="gray.700" fontSize={"sm"}>
+          <Box as="span" boxSize={6}>
+            <b>Market Potential</b>:
+          </Box>
+          &nbsp;{market_potential}
+        </Text>
+        <Text align={"left"} mt={2} color="gray.700" fontSize={"sm"}>
+          <Box as="span" boxSize={6}>
+            <b>Impact to GEA</b>:
+          </Box>
+          &nbsp;{impact_to_GEA}
+        </Text>
+      </Box>
+    );
+  }
+
+  return null;
+};
 
 function RadarChartParent(props) {
   return (
     <ResponsiveContainer width={"100%"} height={"100%"}>
       <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="technology area" />
+        <PolarAngleAxis dataKey="technology_area" />
         <PolarRadiusAxis angle={30} domain={[0, 10]} />
         <Radar
           name="impact score"
-          dataKey="impact score"
+          dataKey="average"
           stroke="#8884d8"
           fill="#8884d8"
           fillOpacity={0.6}
         />
         <Legend />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
       </RadarChart>
     </ResponsiveContainer>
   );
